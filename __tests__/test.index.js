@@ -6,21 +6,34 @@ const MONGO_URL = 'mongodb://localhost:27017/aroundtheus';
 
 // Write your code
 beforeAll(() => {
-    mongoose.connect(MONGO_URL);
+    return mongoose.connect(MONGO_URL, {
+        useNewUrlParser: true,
+        useCreateIndex: true,
+        useFindAndModify: false,
+        useUnifiedTopology: true
+    });
 });
 afterAll(() => {
-    mongoose.disconnect();
+    return mongoose.disconnect();
 });
 
 describe('Database tests', () => {
     beforeEach(() => {
-        User.create(fixtures.user);
+        const { name, avatar, about, password, email } = fixtures.user;
+        User.create({
+            name, avatar, about, password, email
+        });
     });
     afterEach(() => {
-        User.deleteOne(fixtures.user.name)
+        User.deleteOne({ email: fixtures.user.email })
+    });
+    it('The user must be complete', () => {
+        return User.findOne({ email: fixtures.user.email })
+            .then((user) => {
+                expect(user).toBeDefined();
+                expect(user.email).toBe(fixtures.user.email);
+                expect(user.name).toBe(fixtures.user.name);
+            });
     });
 });
 
-test('test name', () => {
-
-});
