@@ -6,15 +6,21 @@ const MONGO_URL = 'mongodb://localhost:27017/aroundtheus';
 
 // Write your code
 beforeAll(() => {
-
+    mongoose.connect(MONGO_URL);
 });
 afterAll(() => {
-
+    mongoose.disconnect();
 });
 
 describe('Database tests', () => {
-    beforeEach(() => { });
-    afterEach(() => { });
+    beforeEach(() => {
+        User.create(fixtures.user);
+    });
+    afterEach(() => {
+        User.deleteOne(fixtures.user.name)
+    });
 });
 
-test('test name', () => { });
+test('test name', () => {
+
+});
